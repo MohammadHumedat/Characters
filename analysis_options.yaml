@@ -1,0 +1,43 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    missing_required_param: error
+    missing_return: error
+    dead_code: error
+    unused_import: error
+    unused_local_variable: error
+    unnecessary_cast: error
+    prefer_const_constructors: error
+    prefer_const_literals_to_create_immutables: error
+    prefer_const_declarations: error
+    unnecessary_null_checks: error
+    avoid_print: error
+
+linter:
+  rules:
+    # ✅ const rules
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_const_declarations: true
+
+    # ✅ style
+    always_use_package_imports: true
+    prefer_single_quotes: true
+    require_trailing_commas: true
+    sort_child_properties_last: true
+    sized_box_for_whitespace: true
+    use_key_in_widget_constructors: true
+
+    # ✅ safety
+    cancel_subscriptions: true
+    close_sinks: true
+    avoid_init_to_null: true
+    avoid_unused_constructor_parameters: true
+    avoid_void_async: true
+    unnecessary_await_in_return: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    prefer_const_constructors_in_immutables: true
+    avoid_returning_null_for_future: true
+    avoid_returning_null_for_void: true
