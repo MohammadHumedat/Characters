@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:learn_flutter/business_logic/cubit/character/character_cubit.dart';
 import 'package:learn_flutter/constants/colors.dart';
+import 'package:learn_flutter/constants/strings.dart';
 import 'package:learn_flutter/data/models/characters.dart';
 import 'package:learn_flutter/presentation/widgets/character_item.dart';
 
@@ -13,127 +14,180 @@ class CharactersScreen extends StatefulWidget {
 }
 
 class _CharactersScreenState extends State<CharactersScreen> {
+  List<Character>? allCharacters;
+  List<Character> searchedForCharacters = [];
+  bool isSearching = false;
+  final _searchTextController = TextEditingController();
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-   
-        BlocProvider.of<CharacterCubit>(
-          context,
-        ).getAllCharacters(); // This to set data for a variable
+    BlocProvider.of<CharacterCubit>(context).getAllCharacters();
   }
 
-  List<Character>? allCharacters;
+  void addToSearchedList(String searchedCharacter) {
+    final query = searchedCharacter.toLowerCase();
+    final startsWithMatches =
+        allCharacters!
+            .where((c) => c.name.toLowerCase().startsWith(query))
+            .toList();
+
+    final containsMatches =
+        allCharacters!
+            .where(
+              (c) =>
+                  !c.name.toLowerCase().startsWith(query) &&
+                  c.name.toLowerCase().contains(query),
+            )
+            .toList();
+
+    searchedForCharacters = [...startsWithMatches, ...containsMatches];
+    setState(() {});
+  }
+
+  Widget buildSearchField() {
+    return TextField(
+      controller: _searchTextController,
+      cursorHeight: 18,
+      style: const TextStyle(
+        fontSize: 18,
+        color: AppColors.grey,
+        fontWeight: FontWeight.w500,
+      ),
+      decoration: const InputDecoration(
+        hintText: 'Find a character',
+        border: InputBorder.none,
+      ),
+      cursorColor: AppColors.black,
+      autofocus: true,
+      onChanged: addToSearchedList,
+    );
+  }
+
+  List<Widget> buildAppBarActions() {
+    return [
+      if (isSearching)
+        IconButton(
+          onPressed: () {
+            _searchTextController.clear();
+            setState(() {
+              isSearching = false;
+              searchedForCharacters.clear();
+            });
+          },
+          icon: const Icon(Icons.clear, color: AppColors.grey),
+        )
+      else
+        IconButton(
+          onPressed: () {
+            ModalRoute.of(context)!.addLocalHistoryEntry(
+              LocalHistoryEntry(
+                onRemove: () {
+                  setState(() {
+                    isSearching = false;
+                    searchedForCharacters.clear();
+                  });
+                },
+              ),
+            );
+            setState(() => isSearching = true);
+          },
+          icon: const Icon(Icons.search, color: AppColors.grey),
+        ),
+    ];
+  }
+
+  Widget buildAppBarTitle() => Text(
+    'Characters',
+    style: Theme.of(
+      context,
+    ).textTheme.titleMedium!.copyWith(color: AppColors.grey),
+  );
+
+  Widget buildCharactersGrid(List<Character> characters) {
+    return GridView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      itemCount: characters.length,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 2 / 3,
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 5,
+        
+      ),
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          child: CharacterItem(character: characters[index]),
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              ConstantStrings.characterScreenDetails,
+              arguments: characters[index],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Characters',
-          style: TextTheme.of(
-            context,
-          ).titleMedium!.copyWith(color: AppColors.grey),
-        ),
-        backgroundColor: AppColors.yalow,
-      ),
-      body: const HomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder(
-      bloc: BlocProvider.of<CharacterCubit>(context),
-      builder: (context, state) {
-        if (state is CharacterLoaded) {
-          return SingleChildScrollView(
-            child: Container(
-              color: AppColors.grey,
-              child: Column(
-                children: [
-                  GridView.builder(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.zero,
-                    itemCount: state.character.length,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 2 / 3,
-                        ),
-                    itemBuilder: (context, index) {
-                      return CharacterItem(character: state.character[index]);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        } else if (state is CharacterLoading) {
-          return const CircularProgressIndicator();
-        } else {
-          return Center(
-            child: Card(
-              color: Colors.red.shade50,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 4,
-              margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+        elevation: 4,
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title:
+            isSearching
+                ? buildSearchField()
+                : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      color: Colors.red.shade400,
-                      size: 48,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      "حدث خطأ",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red.shade700,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      "لم نتمكن من تحميل البيانات، الرجاء المحاولة لاحقًا.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade700,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        context.read<CharacterCubit>().getAllCharacters();
-                      },
-                      icon: const Icon(Icons.refresh),
-                      label: const Text("إعادة المحاولة"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade400,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
+                    const Icon(Icons.person, color: AppColors.grey, size: 28),
+                    const SizedBox(width: 8),
+                    buildAppBarTitle(),
                   ],
                 ),
+        leading:
+            isSearching
+                ? const BackButton(color: AppColors.grey)
+                : Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.grey.withAlpha(1),
+                    child: const Icon(Icons.menu, color: AppColors.grey),
+                  ),
+                ),
+        actions: buildAppBarActions(),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+        ),
+        shadowColor: AppColors.grey.withAlpha(2),
+      ),
+      body: BlocBuilder<CharacterCubit, CharacterState>(
+        builder: (context, state) {
+          if (state is CharacterLoaded) {
+            allCharacters = state.character;
+            final charactersToShow = // if searching, show searched list; else show all
+                isSearching ? searchedForCharacters : allCharacters ?? [];
+
+            return SingleChildScrollView(
+              child: Container(
+                color: AppColors.grey,
+                child: Column(
+                  children: [buildCharactersGrid(charactersToShow)],
+                ),
               ),
-            ),
-          );
-        }
-      },
+            );
+          } else if (state is CharacterLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return const Center(child: Text('Error loading data'));
+          }
+        },
+      ),
     );
   }
 }
