@@ -5,11 +5,11 @@ import 'package:learn_flutter/constants/strings.dart';
 import 'package:learn_flutter/data/models/characters.dart';
 import 'package:learn_flutter/data/repository/characters_repository.dart';
 import 'package:learn_flutter/data/web_services/characters_web_services.dart';
-import 'package:learn_flutter/presentation/screens/characters_details.dart';
+import 'package:learn_flutter/presentation/screens/characters_details_screen.dart';
 import 'package:learn_flutter/presentation/screens/characters_screen.dart';
 
 class AppRouters {
-  CharactersRepository _charactersRepository = CharactersRepository(
+  final CharactersRepository _charactersRepository = CharactersRepository(
     CharactersWebServices(),
   );
   Route? onGenerateRoute(RouteSettings setting) {
@@ -29,5 +29,6 @@ class AppRouters {
           builder: (_) => CharactersDetails(character: character),
         );
     }
+    return null;
   }
 }

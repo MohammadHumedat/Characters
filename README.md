@@ -16,16 +16,16 @@ A complete **Flutter learning project** built to demonstrate best practices for:
 
 ## 🚀 Features
 
-✅ Fetch data from REST API using **Dio / WebServices layer**
-✅ Manage state using **BLoC / Cubit**
-✅ Organize project with **Repository Pattern**
-✅ Navigation via **AppRouters class**
-✅ Implement **Search** filter inside GridView
-✅ Add **Hero widget** for transition between Character list and details
-✅ Beautiful **SliverAppBar** in details screen
-✅ Handle loading, success, and error states gracefully
-✅ Clean, modular, and readable project structure
-✅ Proper **lint rules** configuration in `analysis_options.yaml`
+✅- Fetch data from REST API using **Dio / WebServices layer**
+✅- Manage state using **BLoC / Cubit**
+✅- Organize project with **Repository Pattern**
+✅- Navigation via **AppRouters class**
+✅- Implement **Search** filter inside GridView
+✅- Add **Hero widget** for transition between Character list and details
+✅- Beautiful **SliverAppBar** in details screen
+✅- Handle loading, success, and error states gracefully
+✅- Clean, modular, and readable project structure
+✅- Proper **lint rules** configuration in `analysis_options.yaml`
 
 ---
 
@@ -200,6 +200,6 @@ This project is meant for learning and collaboration!
 ## 💬 Author
 
 **Mohammad Hmedat**
-👨‍💻 Software Engineer | Flutter & .NET Developer
-📚 Passionate about clean code, architecture, and building learning projects
-📧 [[humedat23@gmail.com](mailto:humedat23@gmail.com)]
+👨‍💻 - Software Engineer | Flutter & .NET Developer
+📚 - Passionate about clean code, architecture, and building learning projects
+📧 - [[humedat23@gmail.com](mailto:humedat23@gmail.com)]

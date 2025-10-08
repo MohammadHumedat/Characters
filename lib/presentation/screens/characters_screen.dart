@@ -115,11 +115,10 @@ class _CharactersScreenState extends State<CharactersScreen> {
         childAspectRatio: 2 / 3,
         crossAxisSpacing: 5,
         mainAxisSpacing: 5,
-        
       ),
       itemBuilder: (context, index) {
-        return GestureDetector(
-          child: CharacterItem(character: characters[index]),
+        return CharacterItem(
+          character: characters[index],
           onTap: () {
             Navigator.pushNamed(
               context,
@@ -174,6 +173,8 @@ class _CharactersScreenState extends State<CharactersScreen> {
                 isSearching ? searchedForCharacters : allCharacters ?? [];
 
             return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(top: 10, bottom: 16),
               child: Container(
                 color: AppColors.grey,
                 child: Column(
